@@ -10,7 +10,6 @@ Implementation of 13 dwarves in C/C++
 * (bad) --> code is not composed and has runtime errors and/or compile-time errors.
 * (incomplete) --> the code has no obvious structure or goal.
 * (*) --> Currently no known benchmark
-*++++++++++++++++++++++++++
 
 The Thirteen Dwarves: 
 1. Dense Linear Algebra --> heatDistribution.cpp (fair)
