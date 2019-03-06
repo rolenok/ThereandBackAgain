@@ -4,7 +4,7 @@
 * More an issue of dealing with technicalities of composability over having trouble implementing parallel.)
 * 
 * +++++++++LEGEND++++++++++
-* (ideal) --> code is composed, commented and executes properly with no runtime errors 
+* (ideal) --> code is composed, commented and executes properly with no bugs (having been repeatedly tested)
 * (excellent) --> code is composed and excecutes properly with no known bugs
 * (good) --> code is not quite composed but executes properly with no known bugs
 * (fair) --> code is not composed and has a few bugs
