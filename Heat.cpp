@@ -1,3 +1,23 @@
+/*************************************************************************************************************************
+* Temperature distribution in metal plates. A classic engineering problem for C/C++ and the 1st of the Thirteen Dwarves.
+* Serial Implementation works, parallel implementation does not (This is embarrassingly parallel, so shouldn't be too long --> 
+* More an issue of dealing with technicalities of composability over having trouble implementing parallel.)
+* 
+* +++++++++LEGEND++++++++++
+* (ideal) --> code is composed, commented and executes properly with no runtime errors 
+* (excellent) --> code is composed and excecutes properly with no known bugs
+* (good) --> code is not quite composed but executes properly with no known bugs
+* (fair) --> code is not composed and has a few bugs
+* (sloppy) --> code is not composed and has major bugs or incorrect output.
+* (bad) --> code is not composed and has runtime errors and/or compile-time errors.
+* (incomplete) --> the code has no obvious structure or goal.
+*++++++++++++++++++++++++++
+**********************************************************************************************************************/
+
+
+
+
+
 #include <stdio.h>
 #include <math.h>
 #include <mpi.h>
@@ -5,12 +25,12 @@
 #define NCOLS 8
 
 
-int heatDistro(double plate1[NROWS][NCOLS], double dtmax) 
+int heatDistro(double plate1[NROWS][NCOLS], double dtmax) // heat distribution function --> this works (fair)
 {
-double top_t, bot_t, right_t, left_t, tol;
+double top_t, bot_t, right_t, left_t, tol; // partition of plate
 double plate2[NROWS][NCOLS] = {{0}}; 
-double plate1[NROWS][NCOLS] = {{0}};
-double dtmax =0.0;
+double plate1[NROWS][NCOLS] = {{0}}; // return value
+double dtmax =0.0; // return value
 int i, j;
 printf("Enter the temperatures of the left, right, top and bottom sides of the plate:\n");
 scanf("%lf %lf %lf %lf",&left_t,&right_t,&top_t,&bot_t);
@@ -54,9 +74,9 @@ int main(int argc, char **argv) {
 	MPI_Comm_Size(MPI_COMM_WORLD, &size);
 	MPI_Comm_Rank(MPI_COMM_WORLD, &rank);
 
-	heatDistro();
+	heatDistro(); // don't think this works yet
 
-	MPI_REDUCE(&plate1[i][j], &dtmax, 1, 0, &MPI_SUM, &MPI_INT);
+	MPI_REDUCE(&plate1[i][j], &dtmax, 1, 0, &MPI_SUM, &MPI_INT); // don't think this works yet either
 
 	MPI_Finalize();
 	return 0;
