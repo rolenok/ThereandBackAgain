@@ -25,7 +25,7 @@
 #define NCOLS 8
 
 
-int heatDistro(double plate1[NROWS][NCOLS], double dtmax) // heat distribution function --> this works (fair)
+int heatDistro(double plate1[NROWS][NCOLS], double dtmax) // heat distribution function (good)
 {
 double top_t, bot_t, right_t, left_t, tol; // partition of plate
 double plate2[NROWS][NCOLS] = {{0}}; 
@@ -67,7 +67,7 @@ printf("\n");
 return plate1[i][j], dtmax;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) { // (incomplete)
 	int rank, size;
 	MPI_Status status;
 	MPI_Init(&argc, &argv);
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
 
 	heatDistro(); // don't think this works yet
 
-	MPI_REDUCE(&plate1[i][j], &dtmax, 1, 0, &MPI_SUM, &MPI_INT); // don't think this works yet either
+	MPI_REDUCE(&plate1[i][j], &dtmax, 1, 0, &MPI_SUM, &MPI_INT); // don't think this is quite right
 
 	MPI_Finalize();
 	return 0;
