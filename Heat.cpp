@@ -5,10 +5,12 @@
 #define NCOLS 8
 
 
-int main(void) 
+int heatDistro(double plate1[NROWS][NCOLS], double dtmax) 
 {
-double top_t, bot_t, right_t, left_t,dtmax =0.0, tol;
-double plate1[NROWS][NCOLS] = {{0}}, plate2[NROWS][NCOLS] = {{0}};
+double top_t, bot_t, right_t, left_t, tol;
+double plate2[NROWS][NCOLS] = {{0}}; 
+double plate1[NROWS][NCOLS] = {{0}};
+double dtmax =0.0;
 int i, j;
 printf("Enter the temperatures of the left, right, top and bottom sides of the plate:\n");
 scanf("%lf %lf %lf %lf",&left_t,&right_t,&top_t,&bot_t);
@@ -42,5 +44,22 @@ for(j=0;j<NCOLS;j++)
 printf("%5.0f", plate1[i][j]);
 printf("\n");
 }
-return 0;
+return plate1[i][j], dtmax;
+}
+
+int main(int argc, char **argv) {
+	int rank, size;
+	MPI_Status status;
+	MPI_Init(&argc, &argv);
+	MPI_Comm_Size(MPI_COMM_WORLD, &size);
+	MPI_Comm_Rank(MPI_COMM_WORLD, &rank);
+
+	heatDistro();
+
+	MPI_REDUCE(&plate1[i][j], &dtmax, 1, 0, &MPI_SUM, &MPI_INT);
+
+	MPI_Finalize();
+	return 0;
+
+
 }
