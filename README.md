@@ -22,9 +22,9 @@ Implementation of 13 dwarves in C++
 
 # The Thirteen Dwarves: 
 1. Dense Linear Algebra --> heatDistribution.cpp (needs work)
-2. Sparse Linear Algebra --> Bifur.cpp (incomplete)
+2. Sparse Linear Algebra --> Communication.cpp (incomplete -- lowest importance level)
 3. Spectral Methods/FFT --> ?
-4. N-body Methods, Fast Multipole Methodse --> needs renaming --> ?
+4. N-body Methods, Fast Multipole Methods --> needs renaming --> ?
 5. Structured Grids --> ?
 6. Unstructured Grids --> ?
 7. Monte Carlo --> mc-pi.c (not going to worry about this one)...
