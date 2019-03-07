@@ -1,5 +1,5 @@
 # ThereandBackAgain
-Implementation of 13 dwarves in C/C++
+Implementation of 13 dwarves in C++
 # COMPILE AND RUN: (assuming you are using a unix-based machine)
 1. Download or clone
 2. Open terminal
