@@ -9,7 +9,7 @@ Implementation of 13 dwarves in C/C++
 6. ./*filename*
 
 [                                                      GOOD LUCK                                                            ]
-# More Info The Thirteen Dwarves: on the Project
+
  +++++++++LEGEND++++++++++
 * (ideal) --> code is composed, commented and executes properly with no bugs (having been repeatedly tested)
 * (excellent) --> code is composed and excecutes properly with no known bugs
