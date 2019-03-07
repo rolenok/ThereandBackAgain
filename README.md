@@ -16,7 +16,7 @@ Implementation of 13 dwarves in C++
 * (good) --> code is not quite composed but follows language standards and executes properly with no known bugs
 * (fair) --> code is not composed and has a few bugs , but follows language and MPI standards
 * (sloppy) --> code does not follow language/MPI standards and/or has major bugs and/or gives incorrect output.
-* (needs work) --> code follows no standards and has runtime errors and/or compile-time errors.
+* (needs work) --> code follows no standards and/or has runtime errors and/or compile-time errors.
 * (incomplete) --> no more than a pseudo mock-up.
 * (*) --> Currently no known benchmark
 
