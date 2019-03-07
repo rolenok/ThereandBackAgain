@@ -1,18 +1,27 @@
 # ThereandBackAgain
 Implementation of 13 dwarves in C/C++
+# COMPILE AND RUN: (assuming you are using a unix-based machine)
+1. Download or clone
+2. Open terminal
+3. cd to proper repo
+4. type 'module load openmpi' and press enter (no output if all goes well)
+5. type 'mpicxx heatDistribution.cpp -o *filename*' and press enter. 
+6. ./*filename*
 
+[                                                      GOOD LUCK                                                            ]
+# More Info The Thirteen Dwarves: on the Project
  +++++++++LEGEND++++++++++
 * (ideal) --> code is composed, commented and executes properly with no bugs (having been repeatedly tested)
 * (excellent) --> code is composed and excecutes properly with no known bugs
 * (good) --> code is not quite composed but executes properly with no known bugs
 * (fair) --> code is not composed and has a few bugs 
 * (sloppy) --> code is not composed and has major bugs or incorrect output.
-* (bad) --> code is not composed and has runtime errors and/or compile-time errors.
+* (needs work) --> code is not composed and has runtime errors and/or compile-time errors.
 * (incomplete) --> the code has no obvious structure or goal.
 * (*) --> Currently no known benchmark
 
-The Thirteen Dwarves: 
-1. Dense Linear Algebra --> heatDistribution.cpp (fair)
+# The Thirteen Dwarves: 
+1. Dense Linear Algebra --> heatDistribution.cpp (needs work)
 2. Sparse Linear Algebra --> Bifur.cpp (incomplete)
 3. Spectral Methods/FFT --> ?
 4. N-body Methods, Fast Multipole Methodse --> needs renaming --> ?
