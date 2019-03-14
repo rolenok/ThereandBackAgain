@@ -61,12 +61,11 @@ do
 
 int main(int argc, char **argv) { // (needs work)
 	int rank, size;
-	double top_t, bot_t, right_t, left_t, tol;  // partition of plate
+	double top_t, bot_t, right_t, left_t, tol, globalPlate;  // partition of plate
 	MPI_Status status;
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Bcast()
 
 	cout << "Enter the temperatures of the left, right, top and bottom sides of the plate: " << endl;
 	cin >> left_t >> right_t >> top_t >> bot_t;
@@ -74,8 +73,8 @@ int main(int argc, char **argv) { // (needs work)
 	cin >> tol;
 	double plate = heatDistro(top_t, bot_t, right_t, left_t, tol); // 
 
-	MPI_Reduce(&plate, 1, 0, MPI_SUM, MPI_DOUBLE, MPI_INT, MPI_COMM_WORLD); // don't think this is quite right
-
+	MPI_Reduce(&plate, &globalPlate, 1, 0, MPI_DOUBLE, MPI_COMM_WORLD); // don't think this is quite right
+	}
 	MPI_Finalize();
 	return 0;
 
