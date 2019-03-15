@@ -18,7 +18,6 @@
 #include <vector>
 
 
-std::complex<int> A[n];
 int fft(int A[int n], int w) {
 	A[n] = {(1,2), (3,4)}
 	std::complex<int> V[n];
