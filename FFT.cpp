@@ -18,6 +18,7 @@
 #include <vector>
 
 
+<<<<<<< HEAD
 double fft(std::complex<double> A[], int w, int n) {
 	A[n] = {(1,2), (3,4)};
 	std::complex<double> V[n];
@@ -25,6 +26,15 @@ double fft(std::complex<double> A[], int w, int n) {
 	std::complex<double> Aodd[n - n/2];
 	std::complex<double> Veven[n];
 	std::complex<double> Vodd[n];
+=======
+int fft(int A[int n], int w) {
+	A[n] = {(1,2), (3,4)}
+	std::complex<int> V[n];
+	std::complex<int> Aeven[n/2]
+	std::complex<int> Aodd[n - n/2]
+	std::complex<int> Veven[n]
+	std::complex<int> Vodd[n]
+>>>>>>> ddf7920e246c8792db47c2ba2a9062e4d57c796a
 
 	n = pow(n, 2);
 
