@@ -18,37 +18,34 @@
 #include <vector>
 
 
-std::complex<int> A[n];
-int fft(int A[int n], int w) {
-	A[n] = {(1,2), (3,4)}
-	std::complex<int> V[n];
-	std::complex<int> Aeven[n/2]
-	std::complex<int> Aodd[n - n/2]
-	std::complex<int> Veven[n]
-	std::complex<int> Vodd[n]
+double fft(std::complex<double> A[], int w, int n) {
+	A[n] = {(1,2), (3,4)};
+	std::complex<double> V[n];
+	std::complex<double> Aeven[n/2];
+	std::complex<double> Aodd[n - n/2];
+	std::complex<double> Veven[n];
+	std::complex<double> Vodd[n];
 
 	n = pow(n, 2);
-	int Aeven[n] = {0};
-	int Aodd[n] = {0};
-	int Veven[n] = {0};
-	int Vodd[n] = {0};
 
-	cout << ("enter values for n and w, respectively");
-	cin >> n >> w;
-	for (int k = 0; k <= n; k++) {
-		 if (k % 2 == 0) {
+	std::cout<< ("enter values for n and w, respectively");
+	std::cin>> n >> w;
+	for (double k = 0.0; k <= n; k++) {
+		 if ((int)k % 2 == 0) {
 		 	Aeven.push_back(k);
 		 }
 		 else { 
 		 	Aodd.push_back(k);
 		 }
 	}
-	Veven[] = {fft(Aeven, n/2, w^2)};
-	Vodd[] = {fft(Aodd, n/2, w^2)};
+	Veven = {fft(Aeven, n/2, w^2)}; // recursion and Divide/conquer
+	Vodd = {fft(Aodd, n/2, w^2)}; // recursion and Divide/conquer
 
 	for(int i = 1; i <= n/2; i++) {
 		V[i] = Veven[i] + pow(w, (i-1))*Vodd[i];
 		V[n/2 +1] = Veven[i] - pow(w, (i-1))*Vodd[i];
+
+		return V[i];
 	}
-	return V[n];
+	
 }
