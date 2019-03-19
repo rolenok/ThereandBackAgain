@@ -18,28 +18,16 @@
 #include <vector>
 
 
-<<<<<<< HEAD
+
 double fft(std::complex<double> A[], int w, int n) {
-	A[n] = {(1,2), (3,4)};
+
 	std::complex<double> V[n];
 	std::complex<double> Aeven[n/2];
 	std::complex<double> Aodd[n - n/2];
 	std::complex<double> Veven[n];
 	std::complex<double> Vodd[n];
-=======
-int fft(int A[int n], int w) {
-	A[n] = {(1,2), (3,4)}
-	std::complex<int> V[n];
-	std::complex<int> Aeven[n/2]
-	std::complex<int> Aodd[n - n/2]
-	std::complex<int> Veven[n]
-	std::complex<int> Vodd[n]
->>>>>>> ddf7920e246c8792db47c2ba2a9062e4d57c796a
-
 	n = pow(n, 2);
 
-	std::cout<< ("enter values for n and w, respectively");
-	std::cin>> n >> w;
 	for (double k = 0.0; k <= n; k++) {
 		 if ((int)k % 2 == 0) {
 		 	Aeven.push_back(k);
@@ -58,4 +46,17 @@ int fft(int A[int n], int w) {
 		return V[i];
 	}
 	
+}
+
+int main() {
+	A[n] = {0};
+	int n; 
+	int w;
+	std::cout<< ("please enter a value for n...")>>cin;
+	endl;
+	std::cout<<("now, enter a value for w...")>>cin;
+	endl;
+
+	fft(A[n], n, w);
+
 }
