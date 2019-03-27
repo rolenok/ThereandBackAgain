@@ -80,7 +80,7 @@ int main() {
 }
 
 /* This is the good stuff ;)
-void plate_simulation(double plate_old, double plate_new, int NROWS, int NCOLS) {
+void plate_simulation(double plate_old, double plate_new, int NROWS, int NCOLS, double tol) {
 	do {
 		double dtmax = 0.0;
 		for(int i = 1; i < NROWS-1; i++) {
@@ -97,7 +97,7 @@ void plate_simulation(double plate_old, double plate_new, int NROWS, int NCOLS) 
 }
 
 
-double random_plate(NROWS, NCOLS) {
+double random_plate(int NROWS, int NCOLS) {
 
 	double (*rand_plate)[NCOLS] = malloc(sizeof(double[NROWS][NCOLS]));
 
@@ -109,7 +109,7 @@ double random_plate(NROWS, NCOLS) {
 	return random_plate;
 }
 
-void plate_print()
+void plate_print(double plate_new, double plate_old)
 	printf("dtmax:%.2f\n",dtmax);
 	for(i = 1;i<NROWS-1;i++) {
 		for(j=1;j<NCOLS-1;j++) {
