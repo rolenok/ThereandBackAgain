@@ -3,8 +3,7 @@
 #include <math.h>
 
 
-
-void JacobJacobi(double tol, int NROWS, int NCOLS) {
+void plate_simulation(double tol, int NROWS, int NCOLS) {
 	int i, j;
 	double dtmax;
 	double (*plate1)[NCOLS] = malloc(sizeof(double[NROWS][NCOLS]));
@@ -21,18 +20,18 @@ void JacobJacobi(double tol, int NROWS, int NCOLS) {
 				plate1[0][j] = plate2[0][j] = temp;
 			}
 			else if (source == 2) {
-				plate1[NROWS][j] = plate2[NROWS][j] = temp;
+				plate1[NROWS-1][j] = plate2[NROWS-1][j] = temp;
 			}
 
 		}
 	}
-	else {
+	else if (source == 3 || source == 4) {
 		for (i = 0; i<NROWS;i++) {
-			if (source == 3) {
+			if (source == 4) {
 				plate1[i][0] = plate2[i][0] = temp;
 			}
-			else if (source == 4) {
-				plate1[i][NCOLS] = plate2[i][NCOLS] = temp;
+			else if (source == 3) {
+				plate1[i][NCOLS-1] = plate2[i][NCOLS-1] = temp;
 			}
 
 		}
@@ -66,10 +65,6 @@ do {
 	}
 }
 
-
-
-
-
 int main() {
 	int NROWS, NCOLS;
 	int temp;
@@ -78,8 +73,39 @@ int main() {
 	scanf("%d %d", &NROWS, &NCOLS);
 	printf("enter the tolerance...");
 	scanf("%lf", &tol);
-	JacobJacobi(tol, NROWS, NCOLS);
+	plate_simulation(tol, NROWS, NCOLS);
 	
 
 	return 0;
 }
+
+/* This is the good stuff ;)
+void plate_simulation(double plate_old, double plate_new, int NROWS, int NCOLS) {
+	do {
+		double dtmax = 0.0;
+		for(int i = 1; i < NROWS-1; i++) {
+			for(int j = 1; j < NCOLS-1;j++)
+			{
+				plate_new[i][j] = (plate_old[i-1][j] + plate_old[i][j-1] + plate_old[i+1][j] + plate_old[i][j+1])/4; //physics
+				if (fabs(plate_new[i][j] - plate_old[i][j]) > dtmax) {
+				dtmax =fabs(plate_new[i][j] - plate_old[i][j]);
+				}
+			}
+		}
+	}while(dtmax > tol);
+	return plate_new;
+}
+
+
+double random_plate(NROWS, NCOLS) {
+
+	double (*rand_plate)[NCOLS] = malloc(sizeof(double[NROWS][NCOLS]));
+
+	for (int i =0; i<NROWS;i++) {
+		for(int j=0; j<NCOLS; j++) {
+			rand_plate[i][j] = rand();
+		}
+	}
+	return random_plate;
+}
+*/
