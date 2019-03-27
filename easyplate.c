@@ -109,7 +109,7 @@ double random_plate(int NROWS, int NCOLS) {
 	return random_plate;
 }
 
-void plate_print(double plate_new, double plate_old)
+void plate_print(double plate_new, double plate_old) {
 	printf("dtmax:%.2f\n",dtmax);
 	for(i = 1;i<NROWS-1;i++) {
 		for(j=1;j<NCOLS-1;j++) {
