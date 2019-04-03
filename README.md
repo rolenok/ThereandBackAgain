@@ -10,15 +10,6 @@ Implementation of 13 dwarves in C++
 
 [                                                      GOOD LUCK                                                            ]
 
- +++++++++LEGEND++++++++++
-* (ideal) --> code is composed, commented, follows language/MPI standards and executes properly with no known bugs 
-* (excellent) --> code is composed, follows language/MPI standards and excecutes properly with no known bugs
-* (good) --> code is not quite composed but follows language standards and executes properly with no known bugs
-* (fair) --> code is not composed and has a few bugs , but follows language and MPI standards
-* (sloppy) --> code does not follow language/MPI standards and/or has major bugs and/or gives incorrect output.
-* (needs work) --> code follows no standards and/or has runtime errors and/or compile-time errors.
-* (incomplete) --> no more than a pseudo mock-up.
-* (*) --> Currently no known benchmark
 
 # The Thirteen Dwarves: 
 1. Dense Linear Algebra --> heatDistribution.cpp (needs work)
