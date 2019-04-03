@@ -10,15 +10,7 @@ Implementation of 13 dwarves in C/C++
 
 [                                                      GOOD LUCK                                                            ]
 
- +++++++++LEGEND++++++++++
-* (ideal) --> code is composed, commented and executes properly with no bugs (having been repeatedly tested)
-* (excellent) --> code is composed and excecutes properly with no known bugs
-* (good) --> code is not quite composed but executes properly with no known bugs
-* (fair) --> code is not composed and has a few bugs 
-* (sloppy) --> code is not composed and has major bugs or incorrect output.
-* (needs work) --> code is not composed and has runtime errors and/or compile-time errors.
-* (incomplete) --> the code has no obvious structure or goal.
-* (*) --> Currently no known benchmark
+
 
 # The Thirteen Dwarves: 
 1. Dense Linear Algebra --> heatDistribution.cpp (needs work)
