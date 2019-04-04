@@ -1,27 +1,129 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 //#include <time.h>
 //#include <mpi.h>
 
+// configuration data
+int width, height;
+int print;
+double tolerance, temperature;
+double north, south, east, west;
 
-int idx(int row, int column, int rows, int columns)
+int idx(int column, int row, int width, int height)
 {
-	return row * columns + column;
+	return row * width + column;
 }
 
-double *plate_creation(int NROWS, int NCOLS) {
-	double *plate = malloc(sizeof(double) * NROWS * NCOLS);
+double *plate_creation(int width, int height) {
+	double *plate = malloc(sizeof(double) * width * height);
 
 	return plate;
 }
 
-void plate_print(int NROWS, int NCOLS, double * plate) {
-	for(int i=0;i<NROWS;i++) {
-		for(int j=0;j<NCOLS;j++)
-			printf("%5.0f", plate[idx(i,j, NROWS, NCOLS)]);
+void plate_print(int width, int height, double *plate) {
+	for(int j = 0; j < height; j++) {
+		for(int i = 0; i < width; i++)
+		{
+			printf("%5.0f", plate[idx(i, j, width, height)]);
+		}
+
 		printf("\n");
 	}
+}
+
+void read_config(char *path)
+{
+	FILE *fp;
+
+	// open config file
+	fp = fopen(path, "r");
+
+	ssize_t read;
+	char *line = NULL;
+	size_t len = 0;
+	// parse line by line
+	while((read = getline(&line, &len, fp)) != -1)
+	{
+		char *token = strtok(line, " ");
+		
+		// skip empty
+		if(token == NULL)
+			continue;
+
+		// skip comments
+		else if(token[0] == '#')
+			continue;
+
+		// skip new lines
+		else if(token[0] == '\n')
+			continue;
+
+		else if(strcmp(token, "width") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%d", &width);
+		}
+		
+		else if(strcmp(token, "height") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%d", &height);
+		}
+
+		else if(strcmp(token, "print") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%d", &print);
+		}
+
+		else if(strcmp(token, "threshold") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%lf", &tolerance);
+		}
+
+		else if(strcmp(token, "temperature") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%lf", &temperature);
+		}
+
+		else if(strcmp(token, "north") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%lf", &north);
+		}
+
+		else if(strcmp(token, "south") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%lf", &south);
+		}
+			
+		else if(strcmp(token, "east") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%lf", &east);
+		}
+			
+		else if(strcmp(token, "west") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%lf", &west);
+		}
+			
+		else
+		{
+			printf("unable to parse line: '%s'\n", line);
+		}
+	}
+
+	printf("width %i height %i\ntolerance %lf temperature %lf\nnorth %lf south %lf east %lf west %lf\n",
+		width, height, tolerance, temperature, north, south, east, west);
+
+	fclose(fp);
 }
 
 double plate_max(int NROWS, int NCOLS, double *plate)
@@ -39,7 +141,7 @@ double plate_max(int NROWS, int NCOLS, double *plate)
 	return max;
 }
 
-void plate_output_ppm(int id, double min, double max, int NROWS, int NCOLS, double *plate)
+void plate_output_ppm(int id, double min, double max, int height, int width, double *plate)
 {
 	FILE *fp;
 
@@ -50,15 +152,15 @@ void plate_output_ppm(int id, double min, double max, int NROWS, int NCOLS, doub
 	// open and write header
 	fp = fopen(name, "w");
 	fprintf(fp, "P2\n");
-	fprintf(fp, "%i %i\n255\n", NROWS, NCOLS);
+	fprintf(fp, "%i %i\n255\n", width, height);
 	
 	// output pixels
-	for(int i = 0; i < NCOLS; ++i)
+	for(int j = 0; j < height; ++j)
 	{
-		for(int j = 0; j < NROWS; ++j)
+		for(int i = 0; i < width; ++i)
 		{
 			// scale [min, max] -> [0, 255]
-			int value = (int)(((plate[idx(i, j, NROWS, NCOLS)]  - min) / max) * 255);
+			int value = (int)(((plate[idx(i, j, width, height)]  - min) / max) * 255);
 
 			fprintf(fp, "%i ", value);
 		}
@@ -74,42 +176,57 @@ int source;
 double temp;
 void set_boundary()
 {
-	printf("enter the location of the heat source (type 1, 2, 3 or 4 for north, south, east or west, respectively: ");
-	scanf("%d", &source);
+	//printf("enter the location of the heat source (type 1, 2, 3 or 4 for north, south, east or west, respectively: ");
+	//scanf("%d", &source);
 
-	printf("enter the boundary temp: ");
-	scanf("%lf", &temp);
+	//printf("enter the boundary temp: ");
+	//scanf("%lf", &temp);
 }
 
-void plate_set_boundary(int NROWS, int NCOLS, double* plate) {
-	if (source == 1 || source == 2) {
-		for (int j = 0; j<NCOLS;j++) {
-			if (source == 1) {
-				plate[idx(0,j, NROWS, NCOLS)] = temp;
-			}
-			else if (source == 2) {
-				plate[idx((NROWS-1), j, NROWS, NCOLS)] = temp;
-			}
-
-		}
+void plate_set_boundary(int width, int height, double* plate) {
+	// set west and east boundary
+	for(int j = 0; j < height; ++j)
+	{
+		plate[idx(0, j, width, height)] = west;
+		plate[idx((width-1), j, width, height)] = east;
 	}
-	else if (source == 3 || source == 4) {
-		for (int i = 0; i<NROWS;i++) {
-			if (source == 4) {
-				plate[idx(i,0, NROWS, NCOLS)] = temp;
-			}
-			else if (source == 3) {
-				plate[(i,NCOLS-1, NROWS, NCOLS)] = temp;
-			}
 
-		}
+	// set north and east boundary
+	for(int j = 0; j < width; ++j)
+	{
+		plate[idx(j, 0, width, height)] = north;
+		plate[idx(j, height-1, width, height)] = south;
 	}
+		
+	//if (source == 1 || source == 2) {
+	//	for (int j = 0; j<NCOLS;j++) {
+	//		if (source == 1) {
+	//			plate[idx(0,j, NROWS, NCOLS)] = temp;
+	//		}
+	//		else if (source == 2) {
+	//			plate[idx((NROWS-1), j, NROWS, NCOLS)] = temp;
+	//		}
+
+	//	}
+	//}
+	//else if (source == 3 || source == 4) {
+	//	for (int i = 0; i<NROWS;i++) {
+	//		if (source == 4) {
+	//			plate[idx(i,0, NROWS, NCOLS)] = temp;
+	//		}
+	//		else if (source == 3) {
+	//			plate[(i,NCOLS-1, NROWS, NCOLS)] = temp;
+	//		}
+
+	//	}
+	//}
 }
 
 void plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
 	// create temporary plate
 	double *plate_tmp = plate_creation(NROWS, NCOLS);
 	plate_set_boundary(NROWS, NCOLS, plate_tmp);
+
 	double *old = plate;
 	double *new = plate_tmp;
 
@@ -149,11 +266,14 @@ void plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
 		//printf("%lf\n", dtmax);
 		//plate_print(NROWS, NCOLS, new);
 
-		plate_output_ppm(count, 0.0, 100.0, NROWS, NCOLS, plate);
+		//if(count % 5000 == 0)
+		//	plate_output_ppm(count, 0.0, 100.0, NROWS, NCOLS, plate);
 		count++;
 
 	} while(dtmax > tol);
 	//MPI_Allreduce(old, new, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+	printf("iterations %i\n", count);
 
 	// 
 	free(plate_tmp);
@@ -168,50 +288,53 @@ void plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
 //}
 
 void plate_set_temp(int NROWS, int NCOLS, double *plate) {
-	double plate_temp;
-	printf("enter the plate temp: ");
-	scanf("%lf", &plate_temp);
+	//double plate_temp;
+	//printf("enter the plate temp: ");
+	//scanf("%lf", &plate_temp);
 	
 	for(int row = 0; row < NROWS; row++)
-
 		for(int column = 0; column < NCOLS; column++)
-			plate[idx(row, column, NROWS, NCOLS)] = plate_temp;
+			//plate[idx(row, column, NROWS, NCOLS)] = plate_temp;
+			plate[idx(row, column, NROWS, NCOLS)] = temperature;
 }
 
 void set_rows_and_cols(int * NROWS, int * NCOLS) {
-	printf("please enter values for rows, cols: ");
-	scanf("%d %d", NROWS, NCOLS);
+	//printf("please enter values for rows, cols: ");
+	//scanf("%d %d", NROWS, NCOLS);
+
+	*NROWS = height;
+	*NCOLS = width;
 }
 
 void set_tolerance(double *tol) {
-	printf("enter the tolerance...");
-	scanf("%lf", tol);
+	//printf("enter the tolerance...");
+	//scanf("%lf", tol);
+
+	*tol = tolerance;
 }
 
-int main() {
+int main(int argc, char **argv) {
 	//int rank, size;
 	//MPI_Init(NULL, NULL);
 	//MPI_Comm_size(MPI_COMM_WORLD, &size);
 	//MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-	int NROWS, NCOLS;
-	set_rows_and_cols(&NROWS, &NCOLS);
+	if(argc == 2)
+		read_config(argv[1]);
+	else
+		return 1;
 
-	double tol;
-	set_tolerance(&tol);
+	double *plate = plate_creation(width, height);
 
-	set_boundary();
+	plate_set_temp(width, height, plate);
+	plate_set_boundary(width, height, plate);
 
-	double *plate = plate_creation(NROWS, NCOLS);
+	plate_simulation(width, height, plate, tolerance);
 
-	plate_set_temp(NROWS, NCOLS, plate);
-	plate_set_boundary(NROWS, NCOLS, plate);
+	plate_output_ppm(0, 0.0, 100.0, width, height, plate);
 
-	plate_simulation(NROWS, NCOLS, plate, tol);
-
-	//plate_print(NROWS, NCOLS, plate);
-
-	//plate_output_ppm(0, 0.0, 100.0, NROWS, NCOLS, plate);
+	if(print)
+		plate_print(width, height, plate);
 
 	//MPI_Finalize();
 
