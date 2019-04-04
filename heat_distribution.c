@@ -10,7 +10,7 @@ int idx(int row, int column, int rows, int columns)
 	return row * columns + column;
 }
 
-double* plate_creation(int NROWS, int NCOLS) {
+double *plate_creation(int NROWS, int NCOLS) {
 	double *plate = malloc(sizeof(double) * NROWS * NCOLS);
 
 	return plate;
@@ -22,6 +22,52 @@ void plate_print(int NROWS, int NCOLS, double * plate) {
 			printf("%5.0f", plate[idx(i,j, NROWS, NCOLS)]);
 		printf("\n");
 	}
+}
+
+double plate_max(int NROWS, int NCOLS, double *plate)
+{
+	double max = plate[0];
+
+	for(int i = 0; i < NCOLS; ++i)
+	{
+		for(int j = 0; j < NROWS; ++j)
+		{
+			max = max > plate[idx(i, j, NROWS, NCOLS)] ?  max : plate[idx(i, j, NROWS, NCOLS)];
+		}
+	}
+
+	return max;
+}
+
+void plate_output_ppm(int id, double min, double max, int NROWS, int NCOLS, double *plate)
+{
+	FILE *fp;
+
+	// generate name
+	char name[128];
+	sprintf(name, "testname%05i.pgm", id);
+	
+	// open and write header
+	fp = fopen(name, "w");
+	fprintf(fp, "P2\n");
+	fprintf(fp, "%i %i\n255\n", NROWS, NCOLS);
+	
+	// output pixels
+	for(int i = 0; i < NCOLS; ++i)
+	{
+		for(int j = 0; j < NROWS; ++j)
+		{
+			// scale [min, max] -> [0, 255]
+			int value = (int)(((plate[idx(i, j, NROWS, NCOLS)]  - min) / max) * 255);
+
+			fprintf(fp, "%i ", value);
+		}
+
+		fprintf(fp, "\n");
+	}	
+
+	// close file
+	fclose(fp);
 }
 
 int source;
@@ -68,6 +114,7 @@ void plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
 	double *new = plate_tmp;
 
 	// simulate
+	int count = 0;
 	double dtmax = 0.0;
 	do {
 		dtmax = 0.0;
@@ -101,6 +148,9 @@ void plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
 
 		//printf("%lf\n", dtmax);
 		//plate_print(NROWS, NCOLS, new);
+
+		plate_output_ppm(count, 0.0, 100.0, NROWS, NCOLS, plate);
+		count++;
 
 	} while(dtmax > tol);
 	//MPI_Allreduce(old, new, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
@@ -159,7 +209,9 @@ int main() {
 
 	plate_simulation(NROWS, NCOLS, plate, tol);
 
-	plate_print(NROWS, NCOLS, plate);
+	//plate_print(NROWS, NCOLS, plate);
+
+	//plate_output_ppm(0, 0.0, 100.0, NROWS, NCOLS, plate);
 
 	//MPI_Finalize();
 
