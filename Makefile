@@ -4,8 +4,10 @@ default: heat_distribution.c
 video:
 	ffmpeg -pattern_type glob -framerate 50 -i "*.pgm" heat.mp4
 
-.PHONY: clean
-clean:
-	-rm *.pgm
-	-rm heat
-	-rm *.mp4
+.PHONY: clean, cleanpgm
+clean: cleanpgm
+	@rm heat
+	@rm *.mp4
+
+cleanpgm:
+	@rm *.pgm

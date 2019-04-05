@@ -8,8 +8,12 @@
 // configuration data
 int width, height;
 int print;
+int ppm_frequency;
+int random_temp = 0;
+double rand_min, rand_max;
 double tolerance, temperature;
 double north, south, east, west;
+char base[128];
 
 int idx(int column, int row, int width, int height)
 {
@@ -26,7 +30,7 @@ void plate_print(int width, int height, double *plate) {
 	for(int j = 0; j < height; j++) {
 		for(int i = 0; i < width; i++)
 		{
-			printf("%5.0f", plate[idx(i, j, width, height)]);
+			printf("%10.0f", plate[idx(i, j, width, height)]);
 		}
 
 		printf("\n");
@@ -78,6 +82,18 @@ void read_config(char *path)
 			sscanf(token, "%d", &print);
 		}
 
+		else if(strcmp(token, "ppm") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%d", &ppm_frequency);
+		}
+
+		else if(strcmp(token, "basename") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%s", base);
+		}
+
 		else if(strcmp(token, "threshold") == 0)
 		{
 			token = strtok(NULL, " ");
@@ -88,6 +104,17 @@ void read_config(char *path)
 		{
 			token = strtok(NULL, " ");
 			sscanf(token, "%lf", &temperature);
+		}
+
+		else if(strcmp(token, "randomtemp") == 0)
+		{
+			random_temp = 1;
+
+			token = strtok(NULL, " ");
+			sscanf(token, "%lf", &rand_min);
+
+			token = strtok(NULL, " ");
+			sscanf(token, "%lf", &rand_max);
 		}
 
 		else if(strcmp(token, "north") == 0)
@@ -141,13 +168,14 @@ double plate_max(int NROWS, int NCOLS, double *plate)
 	return max;
 }
 
-void plate_output_ppm(int id, double min, double max, int height, int width, double *plate)
+void plate_output_ppm(int id, char *base, double min, double max, int height, int width, double *plate)
 {
 	FILE *fp;
 
 	// generate name
 	char name[128];
-	sprintf(name, "testname%05i.pgm", id);
+	int offset = sprintf(name, "%s", base);
+	sprintf(&name[offset], "%05i.pgm", id);
 	
 	// open and write header
 	fp = fopen(name, "w");
@@ -222,7 +250,7 @@ void plate_set_boundary(int width, int height, double* plate) {
 	//}
 }
 
-void plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
+int plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
 	// create temporary plate
 	double *plate_tmp = plate_creation(NROWS, NCOLS);
 	plate_set_boundary(NROWS, NCOLS, plate_tmp);
@@ -266,8 +294,12 @@ void plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
 		//printf("%lf\n", dtmax);
 		//plate_print(NROWS, NCOLS, new);
 
-		//if(count % 5000 == 0)
-		//	plate_output_ppm(count, 0.0, 100.0, NROWS, NCOLS, plate);
+		if(count % ppm_frequency == 0)
+		{
+			printf("count %i dtmax %lf\n", count, dtmax);
+			plate_output_ppm(count, base, 0.0, 100.0, NROWS, NCOLS, plate);
+		}
+
 		count++;
 
 	} while(dtmax > tol);
@@ -277,15 +309,19 @@ void plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
 
 	// 
 	free(plate_tmp);
+
+	return count;
 }
 
-//double create_random_plate(int NROWS, int NCOLS, int MAX_RANDOM, int MIN_RANDOM) {
-//	for (int i =0; i<NROWS;i++) {
-//		for(int j=0; j<NCOLS; j++) {
-//			rand_plate[idx(i,j, NROWS, NCOLS)] = rand();
-//		}
-//	}
-//}
+void plate_set_temp_random(int width, int height, double *plate, double min, double max) {
+	for(int j = 0; j < height; ++j)
+	{
+		for(int i = 0; i < width; ++i)
+		{
+			plate[idx(i, j, width, height)] = max * ((double)rand() / (double)RAND_MAX) + min;
+		}
+	}
+}
 
 void plate_set_temp(int NROWS, int NCOLS, double *plate) {
 	//double plate_temp;
@@ -326,12 +362,16 @@ int main(int argc, char **argv) {
 
 	double *plate = plate_creation(width, height);
 
-	plate_set_temp(width, height, plate);
+	if(random_temp == 1)
+		plate_set_temp_random(width, height, plate, rand_min, rand_max);
+
+	else
+		plate_set_temp(width, height, plate);
+
 	plate_set_boundary(width, height, plate);
 
-	plate_simulation(width, height, plate, tolerance);
-
-	plate_output_ppm(0, 0.0, 100.0, width, height, plate);
+	int count = plate_simulation(width, height, plate, tolerance);
+	plate_output_ppm(count, base, 0.0, 100.0, width, height, plate);
 
 	if(print)
 		plate_print(width, height, plate);
