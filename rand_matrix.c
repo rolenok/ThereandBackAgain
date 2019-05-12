@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#define NROWS 10
+#define NCOLS 10
 
 int main() {
 	int i, j;
@@ -13,6 +15,4 @@ int main() {
 	}
 	printf(mat[i][j]);
 }
-
-
 

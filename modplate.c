@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <math.h>
 
-
+int idx(int row, int column, int rows, int columns) {
+	return row * columns + column;
+}
 
 void periodic_jacobi_matrix(int NROWS, int NCOLS, double tol, int temp, int tx, int ty) {
 	int i, j;

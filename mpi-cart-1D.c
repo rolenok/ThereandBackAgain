@@ -2,7 +2,7 @@
 #include <mpi.h>
 #include <math.h>
 
-main (int argc, char *argv) {
+int main (int argc, char *argv) {
 
 	int ndims = 1;
 	int p;

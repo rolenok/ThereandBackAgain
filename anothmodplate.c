@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <math.h>
 
+int idx(int row, int column, int rows, int columns) {
+	
+}
 
-
-void JacobJacobi(double tol, int NROWS, int NCOLS) {
+void JacobJacobi(int NROWS, int NCOLS, double tol, ) {
 	int i, j;
 	double dtmax;
 	double (*plate1)[NCOLS] = malloc(sizeof(double[NROWS][NCOLS]));

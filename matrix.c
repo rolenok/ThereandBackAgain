@@ -45,6 +45,19 @@ void transpose_matrix(int NROWS, int NCOLS, int * a) {
 	}
 }
 
+
+int * automatic_matrix_creation_random_elements(int NROWS, int NCOLS) {
+
+	int *a_rand = malloc(sizeof(int)*NROWS*NCOLS)
+	for (i =0; i<NROWS;i++) {
+		for(j=0; j<NCOLS; j++) {
+			a_rand[idx(i,j,NROWS,NCOLS)] = rand();
+		}
+	}
+	return a_rand;
+}
+
+
 void print_matrix(int NROWS, int NCOLS, int * a) {
 	for (int i = 0; i < NROWS; i++) {
 		for (int j = 0; j < NCOLS; j++) {
@@ -69,7 +82,7 @@ void set_rows_and_columns(int * NROWS, int * NCOLS) {
 
 }
 
-void manual_matrix_creation_floating_elements() {
+double * manual_matrix_creation_floating_elements() {
 	double *a = malloc(sizeof(double) * NROWS * NCOLS);
 	for (int i = 0; i < NROWS; i++) {
 		for (int j = 0; j < NCOLS; j++) {
