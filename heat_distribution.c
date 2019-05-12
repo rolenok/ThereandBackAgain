@@ -2,8 +2,13 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+<<<<<<< HEAD
 //#include <time.h>
 //#include <mpi.h>
+=======
+#include <time.h>
+#include <mpi.h>
+>>>>>>> C-Dwarves
 
 // configuration data
 int width, height;
@@ -116,6 +121,7 @@ void read_config(char *path)
 			token = strtok(NULL, " ");
 			sscanf(token, "%lf", &rand_max);
 		}
+<<<<<<< HEAD
 
 		else if(strcmp(token, "north") == 0)
 		{
@@ -123,6 +129,15 @@ void read_config(char *path)
 			sscanf(token, "%lf", &north);
 		}
 
+=======
+
+		else if(strcmp(token, "north") == 0)
+		{
+			token = strtok(NULL, " ");
+			sscanf(token, "%lf", &north);
+		}
+
+>>>>>>> C-Dwarves
 		else if(strcmp(token, "south") == 0)
 		{
 			token = strtok(NULL, " ");
@@ -276,12 +291,12 @@ int plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
 				if(change > dtmax) {
 					dtmax = change;
 				}
-				/*if ((j % 50) == 0) {
-					MPI_Send(plate_tmp, 1, MPI_DOUBLE, 1, 0, MPI_COMM_WORLD);
-				}
-				else if ((j% 50 != 0)) {
-					MPI_Recv(plate_tmp, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-				}*/
+				if (j % 10 == 0) {
+					MPI_Send(&new[idx(i,j, NROWS-2, NCOLS)], NCOLS, MPI_DOUBLE, my_top_cart_rank, 0, MPI_COMM_WORLD);
+					MPI_Recv(&new[idx(i,j, NROWS-2, NCOLS)], NCOLS, MPI_DOUBLE, my_top_cart_rank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+					MPI_Send(&new[idx(i,j, NROWS, NCOLS -2)], NROWS, MPI_DOUBLE, my_bottom_cart_rank, 0, MPI_COMM_WORLD);
+					MPI_Recv(&new[idx(i,j, NROWS, NCOLS -2)], NROWS, MPI_DOUBLE, my_bottom_cart_rank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 				
 			}
 		}
@@ -303,7 +318,9 @@ int plate_simulation(int NROWS, int NCOLS, double *plate, double tol) {
 		count++;
 
 	} while(dtmax > tol);
-	//MPI_Allreduce(old, new, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Allreduce(old, new, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+
+	printf("iterations %i\n", count);
 
 	printf("iterations %i\n", count);
 
@@ -350,10 +367,68 @@ void set_tolerance(double *tol) {
 }
 
 int main(int argc, char **argv) {
+<<<<<<< HEAD
 	//int rank, size;
 	//MPI_Init(NULL, NULL);
 	//MPI_Comm_size(MPI_COMM_WORLD, &size);
 	//MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+=======
+	int size;
+	int ndims = 1;
+	int my_rank;
+	MPI_Comm comm = MPI_COMM_WORLD;
+	MPI_Comm Comm1D;
+	int dims[ndims], coord[ndims];
+	int periodic[ndims];
+	int reorder;
+	int ierr;
+	int nrows;
+	int ncols;
+
+	MPI_Init(&argc, &argv);
+
+	MPI_Comm_size(comm, &size);
+	MPI_Comm_rank(comm, &my_rank);
+
+
+	// create cartesian mapping 
+	periodic[0] = 1; // periodic shift is false 
+	reorder = 0;
+
+	dims[0] = size;
+
+	ierr = MPI_Cart_create(MPI_COMM_WORLD, ndims, dims,
+	periodic, reorder, &Comm1D);
+	if(ierr != MPI_SUCCESS) printf("ERROR[%d] creating CART\n",ierr);
+
+	//find my coordinates in the cartesian communicator group 
+	MPI_Cart_coords(Comm1D, my_rank, ndims, coord);
+	//use my cartesian coordinates to find my rank in cartesian group
+
+	printf("rank %i coord %i\n", my_rank, coord[0]);
+
+	int my_top_cart_rank;
+	int my_bottom_cart_rank;
+
+	int coord_top[1];
+	int coord_bottom[1];
+
+	//coord_top[0] = ((coord[0] + 1) + size) ;
+	//coord_bottom[0] = ((coord[0] - 1) + size) % size;
+
+	coord_top[0] = coord[0] + 1;
+	coord_bottom[0] = coord[0] - 1;
+
+	printf("rank %i top %i bottom %i\n", my_rank, coord_top[0], coord_bottom[0]);
+
+	MPI_Cart_rank(Comm1D, coord_bottom, &my_bottom_cart_rank);
+	MPI_Cart_rank(Comm1D, coord_top, &my_top_cart_rank);
+
+	MPI_Comm_free(&Comm1D);
+
+	printf("rank %i is alive\n", my_rank);
+
+>>>>>>> C-Dwarves
 
 	if(argc == 2)
 		read_config(argv[1]);
@@ -376,7 +451,7 @@ int main(int argc, char **argv) {
 	if(print)
 		plate_print(width, height, plate);
 
-	//MPI_Finalize();
+	MPI_Finalize();
 
 	return 0;
 }
