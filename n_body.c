@@ -2,11 +2,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define e 2.718
-#define G_CONSTANT 6.673*pow(e,-11)
-#define SOLARMASS 1.9889320*pow(e,30)
+#define G_CONSTANT 6.673*exp(-11)
+#define SOLARMASS 1.9889320*exp(30)
 #define PI 3.14159265358979323846264338327950288420
 #define EPS 3*exp(4)
+
+#define RANDOM_MIN_NATURAL 15
+#define RANDOM_MAX_NATURAL 1000000
+
+#define RANDOM_MIN -1000
+#define RANDOM_MAX 1000
 
 
 
@@ -18,124 +23,159 @@ struct body {
 	int fx, fy; // force components
 };
 
+struct body create_body(int x, int y, int mass, int vx, int vy, int fx, int fy) {
 
-void create_body(int x, int y, int mass, int vx, int vy, int fx, int fy) {
-
-	struct body *ptr, i;
+	struct body i;
+	struct body *ptr; // storage size of i isn't known -- compile time error
 		ptr = &i;
 		ptr->x=x;
 		ptr->y=y;
 		ptr->mass=mass;
-		ptr-vx=vx;
+		ptr->vx=vx;
 		ptr->vy=vy;
 		ptr->fx=fx;
-
-		return i;
-
+	return i;
 }
 
-void create_universe(int N) {
-	double r  = pow(e, 18);
-	struct body * p1 = malloc(sizeof(struct body)*N);
+int rand_bounded_natural_numbers() {
 
-	for (int i = 0; i <= N; i++) {
-		p1->x = r*exp(-1.8)*(0.5-rand());
-		p1->y = r*exp(-1.8)*(0.5-rand());
+	int n = rand();
 
-		double magv = circle(px, py);
-		double angle = tan(abs(py/px));
-		double thetav = PI/(2-angle);
-		double phiv - rand()*PI;
+	if (n < RANDOM_MIN_NATURAL) {
 
-		p1->vx = signum(py)*cos(thetav)*magv;
-		p1->vy = signum(px)*sin(thetav)*magv;
-
-
-
-		if (rand() <= 0.5) {
-
-		vx = -vx;
-		vy = -vy;
-		}
-
-		double mass = rand()*SOLARMASS*exp(20);
-		p1[i] = /*"new"*/ struct body p1;
+		n = RANDOM_MIN_NATURAL;
 	}
+
+	else if (n > RANDOM_MAX_NATURAL) {
+		
+		n = RANDOM_MAX_NATURAL;
+	}
+
+	return n; 
 }
 
-void body_to_body_force(struct body * p1, struct body * p2) {
+int rand_bounded_integers() {
 
-	int d_x = abs((p1->x)-(p2->x));
-	int d_y = abs((p1->y)-(p2->y));
-	int dist = sqrt(pow(d_x, 2) + pow(d_y, 2));
+	int n = rand();
 
+	if (n < RANDOM_MIN) {
 
-	double F = G_CONSTANT*p1->mass*p2->mass/(dist*dist + EPS*EPS);
+		n = RANDOM_MIN;
+	}
 
-	p1->fx += (F*d_x)/dist;
-	p1->fy += (F*d_y)/dist;
+	else if (n > RANDOM_MAX) {
+
+		n = RANDOM_MAX;
+	}
+
+	return n;
 }
 
-void print_values(struct body * p1) {
+double circlev(double x, double y) {
 
-	printf("%d", p1->fx);
-	printf("%d", p1->fy);
-
-}
-
-struct body * update_movement_of_body(int dt, struct body * p1) {
-
-	p1->vx += (dt*p1->fx)/(p1->mass);
-	p1->vy += (dt*p1->fy)/(p1->mass);
-
-}
-
-struct body * reset_force(struct body * p1) {
-
-	p1->fx = 0;
-	p1->fy = 0;
-}
-
-signed double signum(double x) {
-
-	return -x;
-}
-double circle(double x, double y) {
-	double r = pow(e,18);
+	double r = exp(18);
 	double r2 = sqrt((x*x)+(y*y));
 	double num = (6.67*exp(-11)*exp(6)*SOLARMASS);
 
 	return sqrt(num/r2);
+}
 
+signed signum(double x) {
+
+	return -x;
 }
 
 
-void addforces(int N) {
+void body_to_body_force(struct body * body1, struct body * body2) { // all wrong
 
-	for (int i = 0; i < N, i++) {
+	int d_x = abs((body1->x)-(body2->x));
+	int d_y = abs((body1->y)-(body2->y));
+	int dist = sqrt(pow(d_x, 2) + pow(d_y, 2));
 
-		reset_force(p1[i]);
+
+	double F = G_CONSTANT*body1->mass*body2->mass/(dist*dist + EPS*EPS);
+
+	body1->fx += (F*d_x)/dist;
+	body1->fy += (F*d_y)/dist;
+}
+
+struct body * update(int dt, struct body ** bodies, int i) {
+
+	bodies[i]->vx += (dt*bodies[i]->fx)/(bodies[i]->mass);
+	bodies[i]->vy += (dt*bodies[i]->fy)/(bodies[i]->mass);
+}
+
+struct body * reset_force(int i, struct body ** bodies) {
+
+	bodies[i]->fx = 0;
+	bodies[i]->fy = 0;
+}
+
+void addforces(int N, struct body ** bodies) {
+
+	for (int i = 0; i < N; i++) {
+
+		reset_force(i,bodies[i]);
 
 		for (int j = 0; j < N; j++) {
 
-			if (i!=j) p1[i]->body_to_body_force(p1);	
-
+			if (i!=j) bodies[i]->body_to_body_force(bodies[j]);	
 		}
-
 	}
 
 	for (int k = 0; k < N; k++) {
 
-		p1[i]->update_movement_of_body(exp(11));
-
+		bodies[k]->update(exp(11));
 	}
-
 }
 
 
+void create_universe(int N, struct body ** bodies) {
+
+	double r  = exp(18);
+
+
+	for (int i = 1; i <= N; i++) {
+		double x = r*exp(-1.8)*(0.5-rand_bounded_integers(NULL));
+		double y = r*exp(-1.8)*(0.5-rand_bounded_integers(NULL));
+
+		double magv = circlev(x, y);
+		double angle = tan(abs(y/x));
+		double thetav = PI/(2-angle);
+		double phiv = rand_bounded_natural_numbers()*PI;
+
+		double vx = signum(y)*cos(thetav)*magv;
+		double vy = signum(x)*sin(thetav)*magv;
+
+		if (rand() <= 0.5) {
+
+			vx = -vx;
+			vy = -vy;
+		}
+
+		double mass = rand()*SOLARMASS*exp(20);
+		bodies[i] = create_body(rand_bounded_integers(NULL), rand_bounded_integers(NULL), rand_bounded_natural_numbers(NULL),0,0,0,0);
+	}
+
+	bodies[0] = create_body(0,0,exp(6)*SOLARMASS, 0,0,0,0);
+}
+
+
+void print_values(struct body ** bodies) {
+
+	printf("%d", bodies->fx);
+	printf("%d", bodies->fy);
+}
+
 int main() {
-	int N = rand();
+
+	int N = rand_bounded_integers(NULL);
+	struct body * bodies = malloc(sizeof(struct body*)*N);
 	create_universe(N);
+
+
+
+
 	/*
 	struct body*bodyPtr, p1;
 
@@ -153,13 +193,7 @@ int main() {
 
 	*/
 
-	body_to_body_force(&p1, &p2);
-
-	print_values(&p1, &p2);
-
-
-
-
+	//print_values(&p2);
 }
 
 
