@@ -111,7 +111,7 @@ struct body * reset_force(int i, struct body ** bodies) {
 	bodies[i]->fy = 0;
 }
 
-void addforces(int N, struct body ** bodies) {
+void add_force(int N, struct body ** bodies) {
 
 	for (int i = 0; i < N; i++) {
 
@@ -172,7 +172,7 @@ int main() {
 	int N = rand_bounded_integers(NULL);
 	struct body * bodies = malloc(sizeof(struct body*)*N);
 	create_universe(N);
-
+	add_force(N, bodies);
 
 
 
